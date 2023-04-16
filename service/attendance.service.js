@@ -1,5 +1,6 @@
 const repo = require('../repo/attendance.repo')
 const { hoursToMinutes } = require('date-fns')
+const { timeStringToMinutes } = require('../helper/datetime.helper')
 const REST_START = hoursToMinutes(12) // 12:00
 const REST_END = hoursToMinutes(13.5) // 13:30
 
@@ -47,10 +48,6 @@ const calculateWorkTime = (restTime, clockIn, clockOut) => {
 
   const inOutDiff = (clockOut - clockIn) / 60
   return restTime === null ? inOutDiff : inOutDiff - restTime
-}
-
-const timeStringToMinutes = (timeString) => {
-  return timeString === null ? null : parseInt(timeString.split(':')[0]) * 60 + parseInt(timeString.split(':')[1])
 }
 
 module.exports = {
