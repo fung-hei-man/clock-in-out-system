@@ -1,6 +1,6 @@
-const {db} = require("../config/mysql");
-const {ErrorException} = require("../errorHandler/errorException");
-const {ERROR_CODE} = require("../errorHandler/errorCode");
+const {db} = require('../config/mysql')
+const {ErrorException} = require('../errorHandler/errorException')
+const {ERROR_CODE} = require('../errorHandler/errorCode')
 
 const getByDate = (date) => {
   return new Promise((resolve, reject) => {
