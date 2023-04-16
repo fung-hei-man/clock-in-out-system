@@ -3,6 +3,7 @@ const ERROR_CODE = {
   VALIDATION_ERROR: 'Parameters validation failed',
   NOT_FOUND: 'Resource not found',
   UNKNOWN: 'Unknown exception',
+  NOT_IMPLEMENTED: 'Not implemented'
 }
 
 module.exports = {
