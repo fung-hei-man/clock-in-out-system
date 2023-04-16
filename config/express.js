@@ -1,11 +1,13 @@
 const express = require('express')
 const morgan = require('morgan')
+const { attendanceRouter } = require('../route/attendance.route')
 const { ERROR_CODE } = require('../errorHandler/errorCode')
 const { ErrorException } = require('../errorHandler/errorException')
 
 const app = express()
 app.use(morgan('common'))
 
+app.use(`/api/${process.env.API_VERSION}/attendances/`, attendanceRouter)
 
 function customErrorHandler (err, req, res, next) {
   console.error(`Error occurred when processing api request: ${err.code}`)
