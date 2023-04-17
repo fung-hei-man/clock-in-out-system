@@ -7,6 +7,9 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 RUN npm install
 
+# Set timezone
+ENV TZ="Asia/Taipei"
+
 # Bundle app source
 COPY . .
 
