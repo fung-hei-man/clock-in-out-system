@@ -8,7 +8,7 @@ An environment `Local Dev` is created to call `localhost` server. Change the `se
 
 ## Deployment Documentation
 ### `.env` File
-No matter which envrionment this system is going to be deployed to, a `.env` file at root directory is necessary.  
+A `.env` file at root directory is always necessary for this system to run.  
 Before deployment, prepare the `.env` file with following parameters or check `.env.template`.
    ```
    # == Database ==
@@ -28,11 +28,11 @@ Before deployment, prepare the `.env` file with following parameters or check `.
    ```
 
 ### Docker
-Docker Compose is used to start a MySQL DB together with this system.  
+Docker Compose is used to start a MySQL DB together with this system.
 
-1. For security reason, you may change the database password in `docker-compose.yml`.
+1. Change the database password to a strong one in `docker-compose.yml` for security reason.
    ```
-       environment:
+   environment:
       - TZ=Asia/Taipei
       - MYSQL_DATABASE=clock_in_out_system
       - MYSQL_USER=sys_admin
