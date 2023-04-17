@@ -1,0 +1,255 @@
+FORMAT: 1A
+HOST: https://polls.apiblueprint.org/api/v1
+
+# Clock In/Out System
+
+System for employees to clock in / out with query functions.
+
+## Clock In/Out [/clockin]
+
+### Clock In/Out [POST]
+提供打卡功能，晚於午休結束打卡視為打卡下班
+
++ Request (application/json)
+
+        {
+            "employeeNumber": 1110001
+        }
+
++ Response 200 (text/html)
+
+    Success Message
+    
+    + Values
+        + Success: `Successfully [clock-in/clock-out]`
+        + Duplicated Action: `Clock in/out record not updated, maybe you have already clock out today`
+    
+    + Body
+
+            "Successfully [clock-in/clock-out]"
+    
+    
++ Response 400 (application/json)
+    
+    Employee does not exist in the system. Need to create a record about that employee in database first.
+    
+    + Body
+
+            {
+                "message": "Employee with the `employeeNumber` not found",
+                "status": 400,
+                "code": "Parameters validation failed"
+            }
+
+
+### Make up Clock In/Out [PUT]
++ 提供補打卡功能，使漏打上班或下班員工可以進行補打卡  
++ 可只提供`clockIn`和`clockOut`其中之一或兩者皆提供
++ 若資料庫已有該打卡上/下班紀錄則忽略此請求
+
++ Request (application/json)
+    
+        {
+            "employeeNumber": 1110001,
+            "clockIn": "2022-01-03 08:00",
+            "clockOut": "2022-01-03 17:33"
+            
+        }
+
++ Response 200 (text/html)
+
+    Success Message
+    
+    + Values
+        + Success: `Updated fields: [clock-in/clock-out/clock-in,clock-out]`
+        + Duplicated Action: `No field is updated`
+    
+    + Body
+
+            "Updated fields: [clock-in/clock-out/clock-in,clock-out]"
+        
++ Response 400 (application/json)
+    
+    Standard 400 Bad Request response.
+    
+    + Body Attributes
+        + Message
+            + Invalid date time format: `DateTime format is "yyyy-MM-dd HH:mm"`
+            + Missing parameters: `"clockIn" and "clockOut" cannot be null at the same time`
+            + Invalid clock in/out time: `"clockOut" must be after "clockIn"` / `"clockIn" and "clockOut" must be on the same day`
+            + Employee not found: `Employee with the "employeeNumber" not found`
+    
+    + Body
+
+            {
+                "message": "Employee with the `employeeNumber` not found",
+                "status": 400,
+                "code": "Parameters validation failed"
+            }
+        
+
+## Attendance [/attendances]
+### Query by Date [GET /attendances/date/{date}]
+列出指定日期當天所有員工資訊
++ Parameters
+    + date: `2022-01-03` (date) - Specify date for required attendance record
+    
++ Response 200 (application/json)
+
+     + Body Attributes
+        + restTime: If either `clockIn` or `clockOut` is missing, return `null`. 
+        + workTime: If either `clockIn` or `clockOut` is missing, return `null`. 
+    
+    + Body
+    
+            [
+                {
+                    "employeeNum": 1110001,
+                    "clockIn": null,
+                    "clockOut": "08:33:00",
+                    "restTime": null,
+                    "workTime": null
+                },
+                {
+                    "employeeNum": 1110002,
+                    "clockIn": null,
+                    "clockOut": "17:53:00",
+                    "restTime": null,
+                    "workTime": null
+                }
+            ]
+
++ Response 400 (application/json)
+
+    Invalid date format.
+    
+    + Body
+
+            {
+                "message": "Date format is `yyyy-MM-dd`",
+                "status": 400,
+                "code": "Parameters validation failed"
+            }
+
+
+### Query Today Records [GET /attendances/today]
+列出所有員工當日資訊
+
++ Response 200 (application/json)
+
+        [
+            {
+                "employeeNum": 1110030,
+                "clockIn": "09:15:00",
+                "clockOut": "16:39:00",
+                "restTime": 1.5,
+                "workTime": 5.9
+            },
+            {
+                "employeeNum": 1110021,
+                "clockIn": null,
+                "clockOut": "16:39:00",
+                "restTime": null,
+                "workTime": null
+            }
+        ]
+
+
+## Employees [/employees]
+
+### Query by Attendance Status [GET /employees/clockin/from/{from}/to/{to}{?status}]
+列出指定日期區間、指定打卡狀態的指定數量員工清單，未打下班卡為: `?status=in-only`
++ Parameters
+    + from: `2022-01-03` (date) - Start of date range for the query
+    + to: `2022-01-05` (date) - End of date range for the query
+    + status: `in-only` (string) - The clock in/out status
+        + values: `in-only`
+    
++ Response 200 (application/json)
+
+        [
+            {
+                "employee_num": 1110001,
+               
+            },
+            {
+                "employee_num": 1110002,
+            }
+        ]
+
++ Response 400 (application/json)
+
+    Standard 400 Bad Request response.
+    
+    + Body Attributes
+        + Message
+            + Invalid date format: "Date format is `yyyy-MM-dd`"
+            + Missing parameters: "Missing [param_name] query parameter"
+
+    + Body
+
+            {
+                "message": "Date format is `yyyy-MM-dd`",
+                "status": 400,
+                "code": "Parameters validation failed"
+            }
+
+        
++ Response 501 (application/json)
+
+    Required `status` not implemented yet.
+    
+    + Body
+
+            {
+                "message": "Only `in-only` status has been implemented at the moment",
+                "status": 501,
+                "code": "Not implemented"
+            }
+
+
+### Query by Ordered Attendance [GET /employees/clockin/date/{date}{?order,limit}]
+列出指定日期、指定順序的員工清單，前五名最早打卡上班為：`?order=in-early&limit=5`
+
++ Parameters
+    + date: `2022-01-03` (date) - Specific date for the query
+    + order: `in-early` (string, optional) - Way to order the attendance
+        + values: `in-early`
+    + limit: `5` (number, optional) - Number of employees to be returned
+
++ Response 200 (application/json)
+
+        [
+            
+            {
+                "employee_num": 1110001,
+               
+            },
+            {
+                "employee_num": 1110002,
+            }
+        ]
+        
++ Response 400 (application/json)
+
+    Invalid date format.
+    
+    + Body
+
+            {
+                "message": "Date format is `yyyy-MM-dd`",
+                "status": 400,
+                "code": "Parameters validation failed"
+            }
+
++ Response 501 (application/json)
+
+    Required `order` not implemented yet.
+    
+    + Body
+
+            {
+                "message": "Only `in-early` order has been implemented at the moment",
+                "status": 501,
+                "code": "Not implemented"
+            }
