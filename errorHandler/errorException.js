@@ -20,7 +20,7 @@ class ErrorException extends Error {
       this.status = 404
       break
     case ERROR_CODE.NOT_IMPLEMENTED:
-      this.code = 501
+      this.status = 501
       break
     default:
       this.status = 500

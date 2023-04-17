@@ -17,10 +17,10 @@ const queryByDateAndClockInTime = async (req, res, next) => {
     let result = []
     if (order === undefined) {
       result = await service.getEmployeesByClockDate(date)
-    } else if (order === 'early') {
+    } else if (order === 'in-early') {
       result = await service.getEmployeesWithEarliestClockInByDate(date, limit)
     } else {
-      throw new ErrorException(ERROR_CODE.NOT_IMPLEMENTED, 'Only `early` order is implemented now')
+      throw new ErrorException(ERROR_CODE.NOT_IMPLEMENTED, 'Only `in-early` order has been implemented at the moment')
     }
 
     res.send(result)
@@ -48,7 +48,7 @@ const queryByDateRangeAndClockInStatus = async (req, res, next) => {
     if (status === 'incomplete') {
       result = await service.getEmployeesByClockDateRangeAndNoClockOut(from, to)
     } else {
-      throw new ErrorException(ERROR_CODE.NOT_IMPLEMENTED, 'Only `incomplete` status is implemented now')
+      throw new ErrorException(ERROR_CODE.NOT_IMPLEMENTED, 'Only `incomplete` status has been implemented at the moment')
     }
 
     res.send(result)
