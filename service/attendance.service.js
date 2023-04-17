@@ -1,6 +1,8 @@
 const repo = require('../repo/attendance.repo')
-const { hoursToMinutes } = require('date-fns')
+const { hoursToMinutes, isBefore, isSameDay} = require('date-fns')
 const { timeStringToMinutes } = require('../helper/datetime.helper')
+const { ErrorException } = require('../errorHandler/errorException')
+const {ERROR_CODE} = require('../errorHandler/errorCode')
 const REST_START = hoursToMinutes(12) // 12:00
 const REST_END = hoursToMinutes(13.5) // 13:30
 
@@ -50,9 +52,25 @@ const calculateWorkTime = (restTime, clockIn, clockOut) => {
   return restTime === null ? inOutDiff : inOutDiff - restTime
 }
 
+const validateClockInOutPair = (clockInDateTime, clockOutDateTime) => {
+  if (clockInDateTime === null && clockOutDateTime === null) {
+    throw new ErrorException(ERROR_CODE.VALIDATION_ERROR, '`clockIn` and `clockOut` cannot be null at the same time')
+
+  } else if (clockInDateTime === null || clockOutDateTime === null) {
+    return true
+
+  } else if (isBefore(clockOutDateTime, clockInDateTime)) {
+    throw new ErrorException(ERROR_CODE.VALIDATION_ERROR, '`clockOut` must be after `clockIn')
+
+  } else if (!isSameDay(clockOutDateTime, clockInDateTime)) {
+    throw new ErrorException(ERROR_CODE.VALIDATION_ERROR, '`clockIn` and `clockOut` must be on the same day')
+  }
+}
+
 module.exports = {
   getAttendancesByDate,
   generateAttendanceResponse,
   calculateRestTime,
-  calculateWorkTime
+  calculateWorkTime,
+  validateClockInOutPair
 }

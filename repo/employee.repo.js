@@ -2,6 +2,21 @@ const {db} = require('../config/mysql')
 const {ErrorException} = require('../errorHandler/errorException')
 const {ERROR_CODE} = require('../errorHandler/errorCode')
 
+const getByEmployeeNum = (employeeNum) => {
+  return new Promise((resolve, reject) => {
+    db.query(
+      `SELECT *
+      FROM employees
+      WHERE employee_num = ?`,
+      [employeeNum],
+      function (err, results) {
+        if (err) reject(new ErrorException(ERROR_CODE.DB_ERROR, err.sqlMessage))
+        resolve(results)
+      }
+    )
+  })
+}
+
 const getByClockDate = (date) => {
   return new Promise((resolve, reject) => {
     db.query(
@@ -35,7 +50,7 @@ const getByClockDateAndEarliestClockIn = (date, limit) => {
   })
 }
 
-const getByClockDateRangeAndNoClockout = (from, to) => {
+const getByClockDateRangeAndNoClockOut = (from, to) => {
   return new Promise((resolve, reject) => {
     db.query(
       `SELECT e.employee_num
@@ -51,7 +66,8 @@ const getByClockDateRangeAndNoClockout = (from, to) => {
 }
 
 module.exports = {
+  getByEmployeeNum,
   getByClockDate,
   getByClockDateAndEarliestClockIn,
-  getByClockDateRangeAndNoClockout
+  getByClockDateRangeAndNoClockOut
 }

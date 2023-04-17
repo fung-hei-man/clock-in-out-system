@@ -1,14 +1,18 @@
 const express = require('express')
+const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const { attendanceRouter } = require('../route/attendance.route')
+const { clockInRouter } = require('../route/clockin.route')
 const { employeeRouter } = require('../route/employee.route')
 const { ERROR_CODE } = require('../errorHandler/errorCode')
 const { ErrorException } = require('../errorHandler/errorException')
 
 const app = express()
 app.use(morgan('common'))
+app.use(bodyParser.json())
 
 app.use(`/api/${process.env.API_VERSION}/attendances/`, attendanceRouter)
+app.use(`/api/${process.env.API_VERSION}/clockin/`, clockInRouter)
 app.use(`/api/${process.env.API_VERSION}/employees/`, employeeRouter)
 
 function customErrorHandler (err, req, res, next) {

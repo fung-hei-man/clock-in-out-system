@@ -12,11 +12,17 @@ const getEmployeesWithEarliestClockInByDate = (date, limit) => {
 
 const getEmployeesByClockDateRangeAndNoClockOut = (from, to) => {
   console.log(`Query employees clockin-ed between ${from}-${to} without clock out`)
-  return repo.getByClockDateRangeAndNoClockout(from, to)
+  return repo.getByClockDateRangeAndNoClockOut(from, to)
+}
+
+const getByEmployeeNum = (employeeNum) => {
+  console.log(`Query employee by employeeNum ${employeeNum}`)
+  return repo.getByEmployeeNum(employeeNum)
 }
 
 module.exports = {
   getEmployeesByClockDate,
   getEmployeesWithEarliestClockInByDate,
-  getEmployeesByClockDateRangeAndNoClockOut
+  getEmployeesByClockDateRangeAndNoClockOut,
+  getByEmployeeNum
 }
