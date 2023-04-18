@@ -1,14 +1,18 @@
 # Clock In Out System
+
+System for employees to clock in / out with query functions.
  
 ## API Documentation
 Please see https://fhmclockinsys.docs.apiary.io/  
+
 ### Postman
-Postman Collection is prepared and stored in `/postman`. Import the whole folder to Postman to start calling API.  
+Postman Collection is prepared and stored in `/postman`. Import the folder to Postman to start calling API.  
 An environment `Local Dev` is created to call `localhost` server. Change the `server_url` to a suitable one or create a new environment.
+
 
 ## Deployment Documentation
 ### `.env` File
-A `.env` file at root directory is always necessary for this system to run.  
+A `.env` file at root directory is always necessary for this system to run regardless of envrionment.  
 Before deployment, prepare the `.env` file with following parameters or check `.env.template`.
    ```
    # == Database ==
@@ -34,7 +38,7 @@ Docker Compose is used to start a MySQL DB together with this system.
    ```
    environment:
       - TZ=Asia/Taipei
-      - MYSQL_DATABASE=clock_in_out_system
+      - MYSQL_DATABASE=c
       - MYSQL_USER=sys_admin
       - MYSQL_PASSWORD=[CHANGE TO STRONG PASSWORD]
       - MYSQL_ROOT_PASSWORD=[CHANGE TO STRONG PASSWORD]
@@ -49,17 +53,19 @@ Docker Compose is used to start a MySQL DB together with this system.
    ```
 5. May need to wait for several minutes for the MySQL server to start and the system to connect to it.
 
+6. Server should be listening to port 3000 and waiting for incoming calls.
+
 ### Local Run
 1. Prepare a MySQL Server, with `database` created. For example,
    ```
-   CREATE DATABASE clock_in_system;
+   CREATE DATABASE clock_in_out_system;
    ```
 
-4. Create the `.env` file as mentioned.
+2. Create the `.env` file as mentioned.
 
-5. Run the `npm` commands
+3. Run the `npm` commands
    ```
    npm install
    npm run start
    ```
-6. Server should be listening to port 3000 and waiting for incoming calls
+4. Server should be listening to port 3000 and waiting for incoming calls.
